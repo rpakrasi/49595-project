@@ -287,7 +287,7 @@ def extract_with_bs4_fallback(url: str) -> RecipeOutput:
 
 def extract_recipe(url: str) -> dict[str, Any]:
     """
-    Public function your teammates can call.
+    Public function
     """
     try:
         recipe = extract_with_recipe_scrapers(url)
