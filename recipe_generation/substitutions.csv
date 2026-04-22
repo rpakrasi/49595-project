@@ -1,0 +1,51 @@
+original_ingredient,original_role,substitute_ingredient,substitute_role,swap_ratio,functional_role,constraints,notes,heat_adjustment
+butter,fat,coconut oil,fat,1.0,fat,vegan,1:1 ratio by weight; similar consistency; adds subtle coconut flavor (use refined oil for neutral taste),
+butter,fat,olive oil,fat,0.75,fat,vegan,Use 3/4 cup per 1 cup butter; lighter texture; not ideal for pastries; use for savory only,reduce_by_10%
+butter,fat,applesauce,fat,1.0,fat,vegan; low-fat,1:1 by volume; adds moisture and reduces fat by ~50%; texture changes significantly; good for cakes/brownies only,increase_by_5%
+butter,fat,aquafaba,fat,0.5,fat,vegan,Use 3 tbsp per 1 cup butter; technically a binder not fat; whips well for meringues; not suitable for pastry doughs,
+cream,fat,coconut milk,fat,1.0,fat,vegan,richer flavor; works in sauces and desserts,
+milk,liquid,almond milk,liquid,1.0,liquid,vegan; dairy-free,slightly thinner; may need thickener in custards,
+milk,liquid,oat milk,liquid,1.0,liquid,vegan; dairy-free,creamier; good for baking and coffee,
+milk,liquid,soy milk,liquid,1.0,liquid,vegan; dairy-free,protein-rich; works well in baking,
+cheese,protein,nutritional yeast,flavoring,0.25,flavoring,vegan,NOT a protein substitute (use legumes instead); 2 tbsp nutritional yeast ≈ 1 oz cheese flavor; only for umami/flavor replacement,
+egg,protein,flax egg,protein,1.0,protein,vegan; gluten-free,"Binding agent only: 1 tbsp ground flax + 3 tbsp water = 1 egg; stands 5 min; works best in cakes/brownies; poor in custards",
+egg,protein,chia egg,protein,1.0,protein,vegan; gluten-free,"Similar to flax: 1 tbsp chia + 3 tbsp water = 1 egg; stands 5-10 min; slightly more viscous than flax; use in dense baked goods",
+all-purpose flour,structure,gluten-free flour,structure,1.0,structure,gluten-free,"1:1 by weight; may need xanthan gum (1 tsp per cup) as binder; results are denser; increase leavening by 5-10%",increase_by_5%
+all-purpose flour,structure,almond flour,structure,0.5,structure,gluten-free; keto; paleo,"Use 1/2 cup almond flour + 1/2 cup GF flour per 1 cup AP; much higher fat content; nuttier flavor; avoid in delicate pastries",
+all-purpose flour,structure,oat flour,structure,1.0,structure,gluten-free,"1:1 by volume; results in denser texture; use certified GF oats; blend regular oats for finer flour; best in cookies",
+all-purpose flour,structure,rice flour,structure,1.0,structure,gluten-free,"1:1 by weight; lighter and crumbles more; must combine with binder (corn starch, xanthan gum); avoid as sole substitute",
+sugar,sweetener,stevia,sweetener,0.3,sweetener,low-sugar; keto,"Use 1 tsp stevia = 1 cup sugar; much sweeter (200-300x); bitter aftertaste in some; combine with other sweeteners; avoid in yeast breads",
+sugar,sweetener,erythritol,sweetener,0.75,sweetener,low-sugar; keto,"Use 3/4 cup per 1 cup sugar; similar sweetness; absorbs moisture; may cause laxative effects in large quantities; works well in baking",
+sugar,sweetener,honey,sweetener,0.75,sweetener,paleo,"Use 3/4 cup honey + reduce other liquids by 1/4 cup per 1 cup sugar; adds moisture & viscosity; browns 25°F lower; reduces shelf life",increase_by_10%
+sugar,sweetener,maple syrup,sweetener,0.75,sweetener,paleo,"Use 3/4 cup + reduce liquids by 3 tbsp per 1 cup sugar; distinct maple flavor; browns faster; works best in cookies/sauces not cakes",increase_by_10%
+sugar,sweetener,dates,sweetener,1.0,sweetener,vegan; whole-30; paleo,blend into paste; adds texture; natural sweetness,
+salt,seasoning,low-sodium salt,seasoning,1.0,seasoning,low-sodium,less sodium; similar saltiness,
+salt,seasoning,kosher salt,seasoning,0.75,seasoning,kosher,courser grain; use slightly less,
+salt,seasoning,sea salt,seasoning,1.0,seasoning,paleo,mineral-rich; similar saltiness,
+soy sauce,flavoring,tamari,flavoring,1.0,flavoring,gluten-free,similar umami; true gluten-free,
+soy sauce,flavoring,coconut aminos,flavoring,1.0,flavoring,paleo; soy-free,sweeter; similar umami; lower sodium,
+oil,fat,butter,fat,1.0,fat,,similar fat content; adds richness,
+olive oil,fat,avocado oil,fat,1.0,fat,vegan,higher smoke point; mild flavor,
+olive oil,fat,coconut oil,fat,1.0,fat,vegan,higher smoke point; coconut flavor; solid at room temp,increase_by_5%
+chicken,protein,tofu,protein,1.0,protein,vegan; vegetarian,1:1 by weight; press to remove water; absorbs flavors well; texture differs; poor in soups (disintegrates); best in stir-fry,
+chicken,protein,tempeh,protein,1.0,protein,vegan; vegetarian; soy-free,1:1 by weight; nutty flavor; firmer than tofu; maintains texture; better in marinades; requires cooking through,
+chicken,protein,chickpeas,protein,0.8,protein,vegan; vegetarian,"Use 0.8x weight; earthier flavor; denser texture; good in stews/curries; poor as shredded substitute; cook until very soft",reduce_by_10%
+beef,protein,lentils,protein,0.9,protein,vegan; vegetarian,"Use 0.9x weight cooked; similar protein (16g/cup); denser & earthier; best in stews/bolognese; poor for steaks; cook 25-30 min",
+beef,protein,mushrooms,protein,1.0,protein,vegetarian,"1:1 by weight fresh; umami-rich & meaty when seared properly; reduce liquid by 25% (mushrooms release water); best: cremini/portobello",
+salmon,protein,tofu,protein,1.0,protein,vegan; vegetarian; omega-3,neutral; lacks fish oils; add flax,
+yogurt,acid; protein,coconut yogurt,acid; protein,1.0,acid,vegan; dairy-free,similar tanginess; different texture,
+yogurt,acid; protein,cashew cream,acid; protein,0.8,acid,vegan; dairy-free,richer; add lemon juice for tang,
+baking soda,leavening,baking powder,leavening,0.3,leavening,"Use 1 tsp baking soda = 3 tsp (1 tbsp) baking powder; baking powder already has acid; only use if recipe has acidic ingredient",
+baking powder,leavening,self-rising flour,leavening,1.0,leavening,"1:1 by weight; includes salt (adjust other salt down); includes leavening; works for biscuits/cakes; poor for cookies/pastries",
+wheat bread,structure,gluten-free bread,structure,1.0,structure,gluten-free,crumblier; may need more liquid,
+wheat pasta,structure,gluten-free pasta,structure,1.0,structure,gluten-free,"1:1 by weight; softer texture; reduce cooking time by 1-2 min; starchy water prevents sauce adhesion; less satisfying mouthfeel",reduce_by_20%
+wheat pasta,structure,rice pasta,structure,1.0,structure,gluten-free; paleo,"1:1 by weight; similar texture to wheat; cooks ~1-2 min faster; less starch; better sauce adhesion; nutty flavor",reduce_by_10%
+chocolate,flavoring,cacao powder,flavoring,0.5,flavoring,paleo,add cocoa butter or oil for similar texture,
+chocolate,flavoring,carob,flavoring,1.0,flavoring,caffeine-free,milder flavor; less bitter,
+peanut butter,fat; protein,almond butter,fat; protein,1.0,fat; protein,nut-free,milder; slightly less rich,
+peanut butter,fat; protein,tahini,fat; protein,1.0,fat; protein,nut-free,sesame flavor; thinner; mix well,
+peanut butter,fat; protein,sunflower seed butter,fat; protein,1.0,fat; protein,tree nut-free; seed-based,,
+garlic,aromatic,garlic powder,aromatic,0.1,aromatic,"Use 1/8 tsp powder = 1 clove fresh; much more concentrated; less fresh/pungent; loses volatile oils; best in dry rubs/soups",
+garlic,aromatic,shallots,aromatic,1.5,aromatic,"Use 1.5x by weight minced; milder & sweeter; fewer sulfur compounds; good for vinaigrettes/mild dishes; poor in aggressive garlic dishes",
+onion,aromatic,shallots,aromatic,1.0,aromatic,"1:1 by weight minced; milder & sweeter; elegant flavor; caramelize 5-10 min longer; works well in cream sauces",reduce_by_10%
+onion,aromatic,leeks,aromatic,1.2,aromatic,"Use 1.2x by weight (whites + light greens only); milder & more delicate; less sharp; must wash thoroughly; slower cooking (15+ min)",

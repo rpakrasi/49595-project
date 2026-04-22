@@ -2,3 +2,9 @@ requests
 beautifulsoup4
 recipe-scrapers
 lxml
+networkx
+spacy
+# python -m spacy download en_core_web_sm
+pandas>=1.0.0
+langchain>=0.1.0
+openai>=1.0.0

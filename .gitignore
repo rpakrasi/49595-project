@@ -1,0 +1,7 @@
+pyproject.toml
+uv.lock
+.python-version
+data_extraction/__pycache__
+recipe_generation/__pycache__
+semantic_parsing/__pycache__
+.env
