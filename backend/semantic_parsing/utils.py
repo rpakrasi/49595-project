@@ -79,12 +79,12 @@ FRACTION_MAP: dict[str, float] = {
 MODIFIER_PHRASES = [
     "finely chopped", "roughly chopped", "coarsely chopped", "thinly sliced",
     "freshly ground", "freshly squeezed", "lightly beaten", "softened",
-    "room temperature", "at room temperature", "melted", "chilled", "frozen",
+    "room temperature", "room-temperature", "at room temperature", "melted", "chilled", "frozen",
     "toasted", "divided", "optional", "to taste", "or to taste",
     "plus more", "plus extra", "for serving", "for garnish",
     "packed", "sifted", "unsalted", "salted", "low-sodium", "reduced-fat",
     "whole grain", "whole wheat", "extra virgin", "extra-virgin",
-    "pitted", "peeled", "seeded", "cored", "trimmed", "halved", "quartered",
+    "pitted", "peeled", "seeded", "cored", "trimmed", "halved", "quartered", "mashed",
     "drained", "rinsed", "patted dry", "at room temp", "large", "medium", "small", "ripe", "pure", "whole", "beaten"
 ]
 

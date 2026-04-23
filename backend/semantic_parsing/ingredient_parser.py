@@ -29,7 +29,7 @@ def process_recipe(part1_recipe: dict) -> dict:
             continue
 
         # Step 0: Preprocessing - extract notes in parentheses and brackets
-        raw_without_notes, notes = strip_notes(raw)
+        raw_without_notes, notes = strip_notes(raw.replace("*", ""))
 
         # Step 1: NER — quantity + unit
         qty, unit, remainder = parse_quantity_unit(raw_without_notes)

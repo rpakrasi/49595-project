@@ -8,10 +8,13 @@ Handles quantity adjustments and tracks all modifications.
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
+from pathlib import Path
 from typing import Optional
 
-from backend.semantic_parsing.utils import ParsedIngredient, EnrichedRecipeOutput
+import pandas as pd
+
 from backend.recipe_generation.substitution_library import SubstitutionLibrary, Substitution
+from backend.semantic_parsing.utils import ParsedIngredient
 
 
 @dataclass
@@ -30,7 +33,7 @@ class SubstitutionEngine:
     """
     Applies ingredient substitutions to recipes based on constraints.
     """
-    
+
     def __init__(self, library: SubstitutionLibrary):
         """
         Initialize engine with a substitution library.
@@ -40,12 +43,12 @@ class SubstitutionEngine:
         """
         self.library = library
         self.substitutions_applied: list[SubstitutionResult] = []
-    
+
     def substitute_recipe(
-        self,
-        recipe: dict,  # EnrichedRecipeOutput as dict
-        constraints: list[str],
-        exclude_ingredients: Optional[list[str]] = None,
+            self,
+            recipe: dict,  # EnrichedRecipeOutput as dict
+            constraints: list[str],
+            exclude_ingredients: Optional[list[str]] = None,
     ) -> dict:
         """
         Apply substitutions to all ingredients in a recipe.
@@ -60,10 +63,10 @@ class SubstitutionEngine:
         """
         exclude_ingredients = exclude_ingredients or []
         exclude_lower = [ing.lower() for ing in exclude_ingredients]
-        
+
         self.substitutions_applied = []
         substituted_ingredients = []
-        
+
         for ingredient in recipe.get("ingredients", []):
             # Check if ingredient should be excluded
             if any(excl in ingredient["name"].lower() for excl in exclude_lower):
@@ -73,7 +76,7 @@ class SubstitutionEngine:
                     ingredient["functional_role"],
                     constraints
                 )
-                
+
                 if sub_list:
                     best_sub = sub_list[0]
                     new_ing = self._apply_substitution(
@@ -90,7 +93,7 @@ class SubstitutionEngine:
                     ingredient["functional_role"],
                     constraints
                 )
-                
+
                 if sub_list:
                     # Check if original ingredient already satisfies constraints
                     if self._satisfies_constraints(ingredient, constraints):
@@ -105,33 +108,33 @@ class SubstitutionEngine:
                 else:
                     # No substitution needed or available
                     substituted_ingredients.append(ingredient)
-        
+
         # Return modified recipe
         result = recipe.copy()
         result["ingredients"] = substituted_ingredients
         result["substitutions_applied"] = [asdict(s) for s in self.substitutions_applied]
-        
+
         return result
-    
+
     def _apply_substitution(
-        self,
-        original: dict,
-        substitution: Substitution,
-        reason: str,
+            self,
+            original: dict,
+            substitution: Substitution,
+            reason: str,
     ) -> dict:
         """Apply a single substitution to an ingredient."""
         # Adjust quantity based on swap ratio
         new_qty = None
         if original.get("qty") is not None:
             new_qty = original["qty"] * substitution.swap_ratio
-        
+
         new_ingredient = original.copy()
         new_ingredient["name"] = substitution.substitute_ingredient
         new_ingredient["qty"] = new_qty
         new_ingredient["original_name"] = original["name"]
         new_ingredient["swap_ratio"] = substitution.swap_ratio
         new_ingredient["substitution_notes"] = substitution.notes
-        
+
         # Track this substitution
         result = SubstitutionResult(
             original_ingredient=original,
@@ -143,10 +146,11 @@ class SubstitutionEngine:
             new_qty=new_qty,
         )
         self.substitutions_applied.append(result)
-        
+
         return new_ingredient
-    
-    def _satisfies_constraints(self, ingredient: dict, constraints: list[str]) -> bool:
+
+    @staticmethod
+    def _satisfies_constraints(ingredient: dict, constraints: list[str]) -> bool:
         """
         Check if an ingredient already satisfies all constraints.
         This is a simple check; a more sophisticated version could check
@@ -161,14 +165,13 @@ class SubstitutionEngine:
         """
         # For simplicity, assume most ingredients don't satisfy non-standard constraints
         # In production, you'd check ingredient metadata
+        df = pd.read_csv(Path(Path(__file__).parent / "ingredient_constraints.csv"))
+
         ingredient_name_lower = ingredient.get("name", "").lower()
-        
-        # Simple heuristic: if "organic", "free-range", etc. in name, it may satisfy some constraints
-        positive_markers = ["organic", "free-range", "wild-caught", "hormone-free"]
-        satisfies = any(marker in ingredient_name_lower for marker in positive_markers)
-        
-        return satisfies
-    
+        satisfied_constrains = df.loc[df['ingredient'] == ingredient_name_lower, 'satisfied_constraints'].iloc[0].replace(" ", "")
+        satisfied_constrains = set(satisfied_constrains.split(';'))
+        return all(constraint in satisfied_constrains for constraint in constraints)
+
     def get_heat_adjustments(self) -> dict:
         """
         Extract heat adjustments from applied substitutions.
@@ -181,23 +184,23 @@ class SubstitutionEngine:
             if result.substitution.heat_adjustment:
                 original_name = result.original_ingredient.get("name", "")
                 adjustments[original_name] = result.substitution.heat_adjustment
-        
+
         return adjustments
-    
+
     def get_substitution_summary(self) -> str:
         """Generate a human-readable summary of all substitutions made."""
         if not self.substitutions_applied:
             return "No substitutions applied."
-        
+
         lines = []
         for result in self.substitutions_applied:
             qty_note = ""
             if result.quantity_adjusted:
                 qty_note = f" (qty: {result.original_qty} → {result.new_qty})"
-            
+
             lines.append(
                 f"• {result.original_ingredient.get('name')} → {result.substituted_ingredient['name']}{qty_note}\n"
                 f"  Reason: {result.reason}"
             )
-        
+
         return "\n".join(lines)
