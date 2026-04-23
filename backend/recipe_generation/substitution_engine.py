@@ -165,10 +165,15 @@ class SubstitutionEngine:
         """
         # For simplicity, assume most ingredients don't satisfy non-standard constraints
         # In production, you'd check ingredient metadata
+        if not constraints:
+            return True
         df = pd.read_csv(Path(Path(__file__).parent / "ingredient_constraints.csv"))
 
         ingredient_name_lower = ingredient.get("name", "").lower()
-        satisfied_constrains = df.loc[df['ingredient'] == ingredient_name_lower, 'satisfied_constraints'].iloc[0].replace(" ", "")
+        satisfied_constrains = df.loc[df['ingredient'] == ingredient_name_lower, 'satisfied_constraints']
+        if satisfied_constrains.empty:
+            return False
+        satisfied_constrains = satisfied_constrains.iloc[0].replace(" ", "")
         satisfied_constrains = set(satisfied_constrains.split(';'))
         return all(constraint in satisfied_constrains for constraint in constraints)
 
