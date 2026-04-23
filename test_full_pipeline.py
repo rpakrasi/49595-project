@@ -10,10 +10,10 @@ Each function tests one recipe from a website without firewall protection.
 Uncomment/comment functions below to control which recipes are tested.
 """
 
-from data_extraction.scraper import extract_recipe
-from semantic_parsing.ingredient_parser import process_recipe
-from recipe_generation.recipe_generator import RecipeGenerator
-from recipe_generation.utils import format_recipe_for_display, compare_recipes
+from backend.data_extraction.scraper import extract_recipe
+from backend.semantic_parsing.ingredient_parser import process_recipe
+from backend.recipe_generation.recipe_generator import RecipeGenerator
+from backend.recipe_generation.utils import format_recipe_for_display, compare_recipes
 
 
 def test_recipe(recipe_url: str, website_name: str, user_constraint: str = "Make it vegan"):
