@@ -157,5 +157,8 @@ def ingredient_dict_to_string(ingredient: dict) -> str:
     
     if ingredient.get("modifiers"):
         result += f", {', '.join(ingredient['modifiers'])}"
+
+    if ingredient.get("notes"):
+        result += f", {', '.join(ingredient['notes'])}"
     
     return result
