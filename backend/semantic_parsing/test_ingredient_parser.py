@@ -115,6 +115,7 @@ def test_eggs():
                   [
                       '1 whole egg',
                       '3 eggs',
+                      '2 eggs, beaten'
                   ]
               }
     expected_ingredients = [{
@@ -131,7 +132,12 @@ def test_eggs():
         'qty': 3.0,
         'raw': '3 eggs',
         'unit': None,
-    }
+    }, {'functional_role': 'protein',
+        'modifiers': ['beaten'],
+        'name': 'eggs',
+        'qty': 2.0,
+        'raw': '2 eggs, beaten',
+        'unit': None}
     ]
 
     processed_ingredients = process_recipe(recipe)["ingredients"]

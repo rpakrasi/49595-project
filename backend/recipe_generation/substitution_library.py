@@ -14,6 +14,8 @@ from typing import Optional
 
 import pandas as pd
 
+from backend.recipe_generation.utils import expand_semicolon_list
+
 
 @dataclass
 class Substitution:
@@ -110,7 +112,7 @@ class SubstitutionLibrary:
         for _, row in matches.iterrows():
             # Check if substitute satisfies all constraints
             row_constraints_lower = [c.lower() for c in row["constraints"]]
-            
+            row_constraints_lower = expand_semicolon_list(row_constraints_lower)
             # If constraints specified, filter: substitute must have all requested constraints
             if constraints_lower:
                 if not all(c in row_constraints_lower for c in constraints_lower):
@@ -123,7 +125,7 @@ class SubstitutionLibrary:
                 substitute_role=row["substitute_role"],
                 swap_ratio=float(row["swap_ratio"]),
                 functional_role=row["functional_role"],
-                constraints=row["constraints"],
+                constraints=row_constraints_lower,
                 notes=row.get("notes", ""),
                 heat_adjustment=row.get("heat_adjustment"),
             )

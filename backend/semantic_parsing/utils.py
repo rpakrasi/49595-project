@@ -85,7 +85,7 @@ MODIFIER_PHRASES = [
     "packed", "sifted", "unsalted", "salted", "low-sodium", "reduced-fat",
     "whole grain", "whole wheat", "extra virgin", "extra-virgin",
     "pitted", "peeled", "seeded", "cored", "trimmed", "halved", "quartered",
-    "drained", "rinsed", "patted dry", "at room temp", "large", "medium", "small", "ripe", "pure", "whole"
+    "drained", "rinsed", "patted dry", "at room temp", "large", "medium", "small", "ripe", "pure", "whole", "beaten"
 ]
 
 # ──────────────────────────────────────────────────────────────────────────────

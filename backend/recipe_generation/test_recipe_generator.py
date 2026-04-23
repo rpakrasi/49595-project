@@ -86,6 +86,17 @@ def test_substitution_library_find():
     assert all("vegan" in s.constraints for s in subs)
 
 
+def test_substitution_library_find_plural():
+    """Test finding substitutions."""
+    library = SubstitutionLibrary()
+
+    # Find vegan butter substitutes
+    subs = library.find_substitutions("eggs", "protein", ["vegan"])
+
+    assert len(subs) > 0, "Should find vegan butter substitutes"
+    assert all(isinstance(s, Substitution) for s in subs)
+    assert all("vegan" in s.constraints for s in subs)
+
 def test_substitution_engine():
     """Test substitution engine."""
     library = SubstitutionLibrary()

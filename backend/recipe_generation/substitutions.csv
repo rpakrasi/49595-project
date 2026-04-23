@@ -9,7 +9,9 @@ milk,liquid,oat milk,liquid,1.0,liquid,vegan; dairy-free,creamier; good for baki
 milk,liquid,soy milk,liquid,1.0,liquid,vegan; dairy-free,protein-rich; works well in baking,
 cheese,protein,nutritional yeast,flavoring,0.25,flavoring,vegan,NOT a protein substitute (use legumes instead); 2 tbsp nutritional yeast ≈ 1 oz cheese flavor; only for umami/flavor replacement,
 egg,protein,flax egg,protein,1.0,protein,vegan; gluten-free,"Binding agent only: 1 tbsp ground flax + 3 tbsp water = 1 egg; stands 5 min; works best in cakes/brownies; poor in custards",
+eggs,protein,flax eggs,protein,1.0,protein,vegan; gluten-free,"Binding agent only: 1 tbsp ground flax + 3 tbsp water = 1 egg; stands 5 min; works best in cakes/brownies; poor in custards",
 egg,protein,chia egg,protein,1.0,protein,vegan; gluten-free,"Similar to flax: 1 tbsp chia + 3 tbsp water = 1 egg; stands 5-10 min; slightly more viscous than flax; use in dense baked goods",
+eggs,protein,chia eggs,protein,1.0,protein,vegan; gluten-free,"Similar to flax: 1 tbsp chia + 3 tbsp water = 1 egg; stands 5-10 min; slightly more viscous than flax; use in dense baked goods",
 all-purpose flour,structure,gluten-free flour,structure,1.0,structure,gluten-free,"1:1 by weight; may need xanthan gum (1 tsp per cup) as binder; results are denser; increase leavening by 5-10%",increase_by_5%
 all-purpose flour,structure,almond flour,structure,0.5,structure,gluten-free; keto; paleo,"Use 1/2 cup almond flour + 1/2 cup GF flour per 1 cup AP; much higher fat content; nuttier flavor; avoid in delicate pastries",
 all-purpose flour,structure,oat flour,structure,1.0,structure,gluten-free,"1:1 by volume; results in denser texture; use certified GF oats; blend regular oats for finer flour; best in cookies",
@@ -48,4 +50,6 @@ peanut butter,fat; protein,sunflower seed butter,fat; protein,1.0,fat; protein,t
 garlic,aromatic,garlic powder,aromatic,0.1,aromatic,"Use 1/8 tsp powder = 1 clove fresh; much more concentrated; less fresh/pungent; loses volatile oils; best in dry rubs/soups",
 garlic,aromatic,shallots,aromatic,1.5,aromatic,"Use 1.5x by weight minced; milder & sweeter; fewer sulfur compounds; good for vinaigrettes/mild dishes; poor in aggressive garlic dishes",
 onion,aromatic,shallots,aromatic,1.0,aromatic,"1:1 by weight minced; milder & sweeter; elegant flavor; caramelize 5-10 min longer; works well in cream sauces",reduce_by_10%
+onions,aromatic,shallots,aromatic,1.0,aromatic,"1:1 by weight minced; milder & sweeter; elegant flavor; caramelize 5-10 min longer; works well in cream sauces",reduce_by_10%
 onion,aromatic,leeks,aromatic,1.2,aromatic,"Use 1.2x by weight (whites + light greens only); milder & more delicate; less sharp; must wash thoroughly; slower cooking (15+ min)",
+onions,aromatic,leeks,aromatic,1.2,aromatic,"Use 1.2x by weight (whites + light greens only); milder & more delicate; less sharp; must wash thoroughly; slower cooking (15+ min)",

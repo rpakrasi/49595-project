@@ -162,3 +162,9 @@ def ingredient_dict_to_string(ingredient: dict) -> str:
         result += f", {', '.join(ingredient['notes'])}"
     
     return result
+
+def expand_semicolon_list(lst):
+    result = []
+    for item in lst:
+        result.extend([x.strip() for x in item.split(";") if x.strip()])
+    return result
