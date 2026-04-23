@@ -112,10 +112,14 @@ class ConstraintParser:
             r"(?:without|no|exclude|skip|remove|avoid)\s+([a-z\s]+?)(?:\b(?:and|,|or|because)\b|$)",
             prompt_lower
         )
+
+        def normalize_ingredient(text: str) -> str:
+            return re.sub(r"^(the|a|an)\s+", "", text.strip())
+
         for match in exclude_match:
-            ingredients = [ing.strip() for ing in re.split(r"(?:and|,|or)", match)]
+            ingredients = [normalize_ingredient(ing) for ing in re.split(r"(?:and|,|or)", match)]
             constraints.exclude_ingredients.extend([ing for ing in ingredients if ing])
-        
+
         # Add custom constraints if found
         for custom in self.custom_constraints:
             if custom.lower() in prompt_lower:

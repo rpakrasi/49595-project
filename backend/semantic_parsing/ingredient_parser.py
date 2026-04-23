@@ -4,7 +4,8 @@ import re
 from dataclasses import asdict
 
 from backend.semantic_parsing.ingredient_knowledge_graph import IngredientKnowledgeGraph
-from backend.semantic_parsing.utils import EnrichedRecipeOutput, ParsedIngredient, parse_quantity_unit, extract_modifiers
+from backend.semantic_parsing.utils import EnrichedRecipeOutput, ParsedIngredient, parse_quantity_unit, \
+    extract_modifiers, strip_notes
 
 
 def process_recipe(part1_recipe: dict) -> dict:
@@ -24,13 +25,14 @@ def process_recipe(part1_recipe: dict) -> dict:
     parsed_ingredients = []
 
     for raw in part1_recipe.get("ingredients_raw", []):
-        # TODO integrate with spacy
-        # TODO integrate with finetuned bert
         if not raw.strip():
             continue
 
+        # Step 0: Preprocessing - extract notes in parentheses and brackets
+        raw_without_notes, notes = strip_notes(raw)
+
         # Step 1: NER — quantity + unit
-        qty, unit, remainder = parse_quantity_unit(raw)
+        qty, unit, remainder = parse_quantity_unit(raw_without_notes)
 
         # Step 2: Modifiers
         modifiers, name = extract_modifiers(remainder)
@@ -50,6 +52,7 @@ def process_recipe(part1_recipe: dict) -> dict:
             functional_role=role,
             modifiers=modifiers,
             confidence=confidence,
+            notes = notes,
         ))
 
     # Build role summary for Part 3

@@ -186,7 +186,7 @@ def test_recipe_generator_integration():
     
     assert "adaptation_summary" in result
     assert "vegan" in result["adaptation_summary"]["parsed_constraints"]["dietary"]
-    assert "substitutions_applied" in result["adaptation_summary"]
+    assert "substitutions_made" in result["adaptation_summary"]
     assert len(result.get("ingredients", [])) > 0
     assert len(result.get("instructions", [])) > 0
 

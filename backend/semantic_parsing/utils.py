@@ -18,6 +18,7 @@ class ParsedIngredient:
     functional_role: str
     modifiers: list[str]  # e.g. ["finely chopped", "room temperature"]
     confidence: float  # 0-1 NER confidence
+    notes: Optional[list[str]] = None
 
 
 @dataclass
@@ -66,7 +67,6 @@ UNIT_MAP: dict[str, str] = {
     "stalk": "stalk", "stalks": "stalk",
     "stick": "stick", "sticks": "stick",
     "sheet": "sheet", "sheets": "sheet",
-    "large": "large", "medium": "medium", "small": "small",
 }
 
 FRACTION_MAP: dict[str, float] = {
@@ -85,7 +85,7 @@ MODIFIER_PHRASES = [
     "packed", "sifted", "unsalted", "salted", "low-sodium", "reduced-fat",
     "whole grain", "whole wheat", "extra virgin", "extra-virgin",
     "pitted", "peeled", "seeded", "cored", "trimmed", "halved", "quartered",
-    "drained", "rinsed", "patted dry", "at room temp",
+    "drained", "rinsed", "patted dry", "at room temp", "large", "medium", "small", "ripe", "pure", "whole"
 ]
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -228,3 +228,22 @@ def extract_modifiers(text: str) -> tuple[list[str], str]:
     # Strip trailing commas / conjunctions
     cleaned = re.sub(r'[,;]+$', '', cleaned).strip()
     return found, cleaned
+
+def strip_notes(text):
+    notes = []
+
+    # Pattern matches (...) or [...] including nested (one level deep is usually enough for recipes)
+    pattern = r'\((?:[^()]*|\([^()]*\))*\)|\[(?:[^\[\]]*|\[[^\[\]]*\])*\]'
+
+    def replacer(match):
+        content = match.group(0)[1:-1].strip()  # remove outer brackets
+        if content:
+            notes.append(content)
+        return ''  # remove from original text
+
+    cleaned = re.sub(pattern, replacer, text)
+
+    # Normalize whitespace
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+
+    return cleaned, notes
