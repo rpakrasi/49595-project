@@ -9,6 +9,32 @@ function prettyQty(qty, unit) {
   return [value, unit].filter(Boolean).join(" ");
 }
 
+function formatInstruction(text) {
+  return String(text)
+    // HTML entities
+    .replace(/&deg;/gi, "°")
+    .replace(/&#176;/gi, "°")
+
+    // weird spacing around degree symbol
+    .replace(/(\d+)\s*°\s*F\b/gi, "$1 °F")
+    .replace(/(\d+)\s*°\s*C\b/gi, "$1 °C")
+
+    // 350F, 350 F, 350 f
+    .replace(/(\d+)\s*F\b/g, "$1 °F")
+    .replace(/(\d+)\s*f\b/g, "$1 °F")
+    .replace(/(\d+)\s*C\b/g, "$1 °C")
+    .replace(/(\d+)\s*c\b/g, "$1 °C")
+
+    // 350 degrees F / 350 degree Fahrenheit
+    .replace(/(\d+)\s*degrees?\s*Fahrenheit\b/gi, "$1 °F")
+    .replace(/(\d+)\s*degrees?\s*F\b/gi, "$1 °F")
+    .replace(/(\d+)\s*degrees?\s*Celsius\b/gi, "$1 °C")
+    .replace(/(\d+)\s*degrees?\s*C\b/gi, "$1 °C")
+
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function RecipeCard({ title, recipe }) {
   return (
     <div className="card recipe-card">
@@ -51,7 +77,7 @@ function RecipeCard({ title, recipe }) {
             {(recipe.instructions || []).map((step, idx) => (
               <div className="step-row" key={idx}>
                 <div className="step-num">{idx + 1}</div>
-                <div>{step}</div>
+                <div className="instruction-text">{formatInstruction(step)}</div>
               </div>
             ))}
           </div>
@@ -114,7 +140,7 @@ function App() {
       <div className="container">
         <header className="hero">
           <p className="eyebrow">Cooking AI</p>
-          <h1>Original vs adapted recipe</h1>
+          <h1>Original vs Adapted Recipe</h1>
           <p className="subtext">
             Enter a recipe URL and dietary constraint to compare the original
             recipe with the adapted version.
@@ -150,7 +176,7 @@ function App() {
 
         {adapted?.adaptation_summary && (
           <section className="summary card">
-            <h2>Adaptation summary</h2>
+            <h2>Adaptation Summary</h2>
 
             <div className="badges">
               {(constraints.dietary || []).map((item, idx) => (
@@ -191,8 +217,8 @@ function App() {
         )}
 
         <section className="recipes">
-          <RecipeCard title="Original recipe" recipe={original} />
-          <RecipeCard title="Adapted recipe" recipe={adapted} />
+          <RecipeCard title="Original Recipe" recipe={original} />
+          <RecipeCard title="Adapted Recipe" recipe={adapted} />
         </section>
       </div>
     </div>
