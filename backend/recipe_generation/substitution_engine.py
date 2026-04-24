@@ -13,6 +13,7 @@ from typing import Optional
 
 import pandas as pd
 
+from backend.recipe_generation.utils import normalize_ingredient
 from backend.recipe_generation.substitution_library import SubstitutionLibrary, Substitution
 from backend.semantic_parsing.utils import ParsedIngredient
 
@@ -47,7 +48,8 @@ class SubstitutionEngine:
     def substitute_recipe(
             self,
             recipe: dict,  # EnrichedRecipeOutput as dict
-            constraints: list[str],
+            dietary_constraints: list[str],
+            allergen_constraints: list[str],
             exclude_ingredients: Optional[list[str]] = None,
     ) -> dict:
         """
@@ -61,6 +63,8 @@ class SubstitutionEngine:
         Returns:
             Modified recipe dict with substituted ingredients
         """
+        if 'dairy' in allergen_constraints:
+            dietary_constraints.append('dairy-free')
         exclude_ingredients = exclude_ingredients or []
         exclude_lower = [ing.lower() for ing in exclude_ingredients]
 
@@ -74,7 +78,7 @@ class SubstitutionEngine:
                 sub_list = self.library.find_substitutions(
                     ingredient["name"],
                     ingredient["functional_role"],
-                    constraints
+                    dietary_constraints
                 )
 
                 if sub_list:
@@ -91,18 +95,27 @@ class SubstitutionEngine:
                 sub_list = self.library.find_substitutions(
                     ingredient["name"],
                     ingredient["functional_role"],
-                    constraints
+                    dietary_constraints
                 )
 
                 if sub_list:
                     # Check if original ingredient already satisfies constraints
-                    if self._satisfies_constraints(ingredient, constraints):
+                    satisfies_dietary_constraints, missing_constraints = self._satisfies_constraints(ingredient, dietary_constraints)
+                    satisfies_allergen_constraints = True
+                    for allergen in allergen_constraints:
+                        if normalize_ingredient(allergen) in normalize_ingredient(ingredient["name"]):
+                            satisfies_allergen_constraints = False
+                            break
+                    if satisfies_dietary_constraints and satisfies_allergen_constraints:
                         substituted_ingredients.append(ingredient)
                     else:
                         # Apply substitution
+                        adaption_message = f"adapted for constraints: {', '.join(missing_constraints)}"
+                        if not satisfies_dietary_constraints:
+                            adaption_message = f"allergy adaption"
                         best_sub = sub_list[0]
                         new_ing = self._apply_substitution(
-                            ingredient, best_sub, f"adapted for constraints: {', '.join(constraints)}"
+                            ingredient, best_sub, adaption_message
                         )
                         substituted_ingredients.append(new_ing)
                 else:
@@ -113,6 +126,28 @@ class SubstitutionEngine:
         result = recipe.copy()
         result["ingredients"] = substituted_ingredients
         result["substitutions_applied"] = [asdict(s) for s in self.substitutions_applied]
+
+        # Adjust instructions for gluten-free baking
+        title = recipe.get("title", "").lower()
+        if "gluten-free" in dietary_constraints:
+            adjusted_instructions = []
+            for instr in result["instructions"]:
+                if "bake" in instr.lower():
+                    if "cookie" in title:
+                        adjusted_instructions.append(
+                            instr + "\n⚠️ When baking gluten-free cookies, increase baking time by 5-10 minutes and reduce temperature by 25° F.")
+                    elif "bread" in title:
+                        adjusted_instructions.append(
+                            instr + "\n⚠️ When baking gluten-free bread, increase baking time by 10-20 minutes and reduce temperature by 25° F.")
+                    elif "bread" in title:
+                        adjusted_instructions.append(
+                            instr + "\n⚠️ When baking gluten-free bread, increase baking time by 50 % and reduce temperature by 25° F.")
+                    else:
+                        adjusted_instructions.append(
+                            instr + "\n⚠️ When baking gluten-free, increase baking time by 5-20 minutes and reduce temperature by 15-25° F.")
+                else:
+                    adjusted_instructions.append(instr)
+                result["instructions"] = adjusted_instructions
 
         return result
 
@@ -150,7 +185,7 @@ class SubstitutionEngine:
         return new_ingredient
 
     @staticmethod
-    def _satisfies_constraints(ingredient: dict, constraints: list[str]) -> bool:
+    def _satisfies_constraints(ingredient: dict, constraints: list[str]):
         """
         Check if an ingredient already satisfies all constraints.
         This is a simple check; a more sophisticated version could check
@@ -162,20 +197,24 @@ class SubstitutionEngine:
         
         Returns:
             True if ingredient satisfies constraints, False otherwise
+            List of unsatisfied constraints (if any)
         """
         # For simplicity, assume most ingredients don't satisfy non-standard constraints
         # In production, you'd check ingredient metadata
         if not constraints:
-            return True
+            return True, []
         df = pd.read_csv(Path(Path(__file__).parent / "ingredient_constraints.csv"))
 
         ingredient_name_lower = ingredient.get("name", "").lower()
         satisfied_constrains = df.loc[df['ingredient'] == ingredient_name_lower, 'satisfied_constraints']
         if satisfied_constrains.empty:
-            return False
+            return False, constraints
         satisfied_constrains = satisfied_constrains.iloc[0].replace(" ", "")
         satisfied_constrains = set(satisfied_constrains.split(';'))
-        return all(constraint in satisfied_constrains for constraint in constraints)
+        if all(constraint in satisfied_constrains for constraint in constraints):
+            return True, []
+        else:
+            return False, set(constraints) - set(satisfied_constrains)
 
     def get_heat_adjustments(self) -> dict:
         """

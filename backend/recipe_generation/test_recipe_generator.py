@@ -88,7 +88,7 @@ def test_substitution_library_find():
 def test_eggs_are_gluten_free():
     """Test finding substitutions."""
 
-    assert SubstitutionEngine._satisfies_constraints({"name": "eggs"}, ["gluten-free"])
+    assert SubstitutionEngine._satisfies_constraints({"name": "eggs"}, ["gluten-free"])[0]
 
 
 def test_substitution_library_find_plural():

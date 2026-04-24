@@ -26,7 +26,7 @@ class RecipeGenerator:
     
     Generates adapted recipes based on user dietary constraints and preferences.
     """
-    
+
     def __init__(
         self,
         library_path: Optional[str] = None,
@@ -46,7 +46,7 @@ class RecipeGenerator:
         self.library = SubstitutionLibrary(library_path)
         self.constraint_parser = ConstraintParser()
         self.substitution_engine = SubstitutionEngine(self.library)
-        
+
         self.use_llm = use_llm
         if use_llm:
             try:
@@ -58,7 +58,7 @@ class RecipeGenerator:
                 self.step_rewriter = StepRewriter(use_llm=False)
         else:
             self.step_rewriter = StepRewriter(use_llm=False)
-    
+
     def generate(
         self,
         enriched_recipe: dict,  # EnrichedRecipeOutput as dict from Part 2
@@ -79,14 +79,15 @@ class RecipeGenerator:
         """
         # Step 1: Parse user constraints
         constraints = self.constraint_parser.parse(user_prompt)
-        
+
         # Step 2: Apply ingredient substitutions
         substituted_recipe = self.substitution_engine.substitute_recipe(
             enriched_recipe,
-            constraints=constraints.dietary_constraints + constraints.allergies,
+            dietary_constraints=constraints.dietary_constraints,
+            allergen_constraints=constraints.allergies,
             exclude_ingredients=constraints.exclude_ingredients,
         )
-        
+
         # Step 3: Rewrite cooking steps
         if substituted_recipe.get("ingredients") and substituted_recipe.get("instructions"):
             rewritten_steps = self.step_rewriter.rewrite_steps(
@@ -96,14 +97,14 @@ class RecipeGenerator:
                 original_ingredients=enriched_recipe.get("ingredients", []),
                 new_ingredients=substituted_recipe.get("ingredients", []),
             )
-            
+
             # Adjust cooking time
             original_time = enriched_recipe.get("metadata", {}).get("total_time_minutes")
             adjusted_time = self.step_rewriter.adjust_cooking_time(original_time, constraints)
         else:
             rewritten_steps = substituted_recipe.get("instructions", [])
             adjusted_time = enriched_recipe.get("metadata", {}).get("total_time_minutes")
-        
+
         # Step 4: Build final output
         final_recipe = {
             "title": substituted_recipe.get("title", ""),
@@ -136,9 +137,9 @@ class RecipeGenerator:
                 "substitution_summary": self.substitution_engine.get_substitution_summary(),
             },
         }
-        
+
         return final_recipe
-    
+
     def generate_with_fallback(
         self,
         enriched_recipe: dict,
@@ -160,7 +161,7 @@ class RecipeGenerator:
         except Exception as e:
             print(f"Error in recipe generation: {e}")
             print("Returning original recipe.")
-            
+
             # Return original recipe with error note
             enriched_recipe["adaptation_summary"] = {
                 "error": str(e),
@@ -168,7 +169,7 @@ class RecipeGenerator:
                 "original_recipe": True,
             }
             return enriched_recipe
-    
+
     def batch_generate(
         self,
         recipes: list[dict],
@@ -185,11 +186,11 @@ class RecipeGenerator:
             List of modified recipes
         """
         return [self.generate(recipe, user_prompt) for recipe in recipes]
-    
+
     def get_available_constraints(self) -> list[str]:
         """Get list of all recognized constraints in the library."""
         return self.library.get_all_constraints()
-    
+
     def add_substitution(
         self,
         original_ingredient: str,
@@ -227,7 +228,7 @@ class RecipeGenerator:
             notes=notes,
             heat_adjustment=heat_adjustment,
         )
-    
+
     def save_library(self, path: Optional[str] = None) -> None:
         """Persist library to CSV."""
         self.library.save_to_csv(path)

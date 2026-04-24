@@ -11,6 +11,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
+from backend.recipe_generation.utils import normalize_ingredient
+
 
 @dataclass
 class ParsedConstraints:
@@ -28,22 +30,22 @@ class ConstraintParser:
     """
     Parses natural language prompts to extract dietary and cooking constraints.
     """
-    
+
     # Standard dietary patterns
     DIETARY_PATTERNS = {
-        "vegan": r"\b(vegan|no animal)\b",
+        "vegan": r"\b(vegan|no animal|plant.?based)\b",
         "vegetarian": r"\b(vegetarian|no meat|meat-free)\b",
-        "gluten-free": r"\b(gluten.?free|gluten-free|no gluten|gf)\b",
-        "dairy-free": r"\b(dairy.?free|dairy-free|no dairy|lactose.?free)\b",
+        "gluten-free": r"\b(gluten.?free|gluten-free|no gluten|gf|wheat.?free)\b",
+        "dairy-free": r"\b(dairy.?free|dairy-free|no dairy|lactose.?free|milk.?free)\b",
         "keto": r"\b(keto|ketogenic|low.?carb|no carb)\b",
         "paleo": r"\b(paleo|paleolithic)\b",
         "whole-30": r"\b(whole.?30|whole-30|w30)\b",
-        "low-sodium": r"\b(low.?sodium|low salt|salt.?free)\b",
-        "low-sugar": r"\b(low.?sugar|sugar.?free|no sugar)\b",
+        "low-sodium": r"\b(low.?sodium|low salt|salt.?free|healthy|no salt added|reduced sodium)\b",
+        "low-sugar": r"\b(low.?sugar|sugar.?free|no sugar|healthy|unsweetened|no added sugar)\b",
         "kosher": r"\b(kosher|halal)\b",
         "nut-free": r"\b(nut.?free|nut-free|no nut)\b",
     }
-    
+
     # Allergen patterns
     ALLERGEN_PATTERNS = {
         "peanuts": r"\b(peanut|peanuts|groundnut|groundnuts)\b",
@@ -55,7 +57,7 @@ class ConstraintParser:
         "soy": r"\b(soy|soybean|edamame|tofu|tempeh|miso)\b",
         "sesame": r"\b(sesame)\b",
     }
-    
+
     # Cooking preference patterns
     COOKING_PATTERNS = {
         "quick": r"\b(quick|fast|quick.?meal|in a hurry|short|easy)\b",
@@ -63,7 +65,7 @@ class ConstraintParser:
         "low-heat": r"\b(low.?heat|gentle|low temperature)\b",
         "high-heat": r"\b(high.?heat|sear|seared|crispy|crisped)\b",
     }
-    
+
     def __init__(self, custom_constraints: Optional[list[str]] = None):
         """
         Initialize parser with optional custom constraint patterns.
@@ -72,7 +74,7 @@ class ConstraintParser:
             custom_constraints: List of additional constraint keywords to recognize
         """
         self.custom_constraints = custom_constraints or []
-    
+
     def parse(self, prompt: str) -> ParsedConstraints:
         """
         Parse a natural language prompt into structured constraints.
@@ -85,36 +87,33 @@ class ConstraintParser:
         """
         prompt_lower = prompt.lower()
         constraints = ParsedConstraints(raw_prompt=prompt)
-        
+
         # Extract dietary constraints
         for diet, pattern in self.DIETARY_PATTERNS.items():
             if re.search(pattern, prompt_lower):
                 constraints.dietary_constraints.append(diet)
-        
+
         # Extract allergies
         for allergen, pattern in self.ALLERGEN_PATTERNS.items():
             if re.search(pattern, prompt_lower):
                 constraints.allergies.append(allergen)
-        
+
         # Extract cooking preferences
         if re.search(self.COOKING_PATTERNS.get("quick", ""), prompt_lower):
             constraints.cooking_time_adjustment = "reduce"
         if re.search(self.COOKING_PATTERNS.get("slow", ""), prompt_lower):
             constraints.cooking_time_adjustment = "increase"
-        
+
         if re.search(self.COOKING_PATTERNS.get("high-heat", ""), prompt_lower):
             constraints.cooking_level_adjustment = "increase"
         if re.search(self.COOKING_PATTERNS.get("low-heat", ""), prompt_lower):
             constraints.cooking_level_adjustment = "reduce"
-        
+
         # Extract specific ingredient exclusions (e.g., "without onions", "no garlic")
         exclude_match = re.findall(
             r"(?:without|no|exclude|skip|remove|avoid)\s+([a-z\s]+?)(?:\b(?:and|,|or|because)\b|$)",
             prompt_lower
         )
-
-        def normalize_ingredient(text: str) -> str:
-            return re.sub(r"^(the|a|an)\s+", "", text.strip())
 
         for match in exclude_match:
             ingredients = [normalize_ingredient(ing) for ing in re.split(r"(?:and|,|or)", match)]
@@ -124,15 +123,15 @@ class ConstraintParser:
         for custom in self.custom_constraints:
             if custom.lower() in prompt_lower:
                 constraints.preferences.append(custom)
-        
+
         # Remove duplicates
         constraints.dietary_constraints = list(set(constraints.dietary_constraints))
         constraints.allergies = list(set(constraints.allergies))
         constraints.preferences = list(set(constraints.preferences))
         constraints.exclude_ingredients = list(set(constraints.exclude_ingredients))
-        
+
         return constraints
-    
+
     def format_for_llm(self, constraints: ParsedConstraints) -> str:
         """
         Format parsed constraints into a human-readable string for LLM prompting.
@@ -144,29 +143,29 @@ class ConstraintParser:
             Formatted string summarizing all constraints
         """
         parts = []
-        
+
         if constraints.dietary_constraints:
             parts.append(
                 f"Dietary constraints: {', '.join(constraints.dietary_constraints)}"
             )
-        
+
         if constraints.allergies:
             parts.append(
                 f"Allergies to avoid: {', '.join(constraints.allergies)}"
             )
-        
+
         if constraints.exclude_ingredients:
             parts.append(
                 f"Exclude ingredients: {', '.join(constraints.exclude_ingredients)}"
             )
-        
+
         if constraints.cooking_time_adjustment != "none":
             parts.append(f"Cooking time: {constraints.cooking_time_adjustment}")
-        
+
         if constraints.cooking_level_adjustment != "none":
             parts.append(f"Cooking heat level: {constraints.cooking_level_adjustment}")
-        
+
         if constraints.preferences:
             parts.append(f"Preferences: {', '.join(constraints.preferences)}")
-        
+
         return "\n".join(parts) if parts else "No specific constraints"
