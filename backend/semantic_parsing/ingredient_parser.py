@@ -64,7 +64,7 @@ def process_recipe(part1_recipe: dict) -> dict:
         title=part1_recipe.get("title", "Untitled Recipe"),
         source_url=part1_recipe.get("source_url", ""),
         ingredients=parsed_ingredients,
-        instructions=[instr.replace("&ordm;", " °") for instr in part1_recipe.get("instructions", [])],
+        instructions=[instr.replace("&ordm;", " °").replace("&quot;","\"") for instr in part1_recipe.get("instructions", [])],
         graph_summary=role_counts,
     )
 

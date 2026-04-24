@@ -111,7 +111,7 @@ class SubstitutionEngine:
                     else:
                         # Apply substitution
                         adaption_message = f"adapted for constraints: {', '.join(missing_constraints)}"
-                        if not satisfies_dietary_constraints:
+                        if not satisfies_allergen_constraints:
                             adaption_message = f"allergy adaption"
                         best_sub = sub_list[0]
                         new_ing = self._apply_substitution(

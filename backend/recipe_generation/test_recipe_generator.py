@@ -135,7 +135,7 @@ def test_substitution_engine():
     }
 
     # Apply vegan constraints
-    modified = engine.substitute_recipe(recipe, ["vegan"])
+    modified = engine.substitute_recipe(recipe, ["vegan"], [])
 
     assert "ingredients" in modified
     assert len(modified.get("substitutions_applied", [])) > 0

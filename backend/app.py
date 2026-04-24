@@ -1,13 +1,16 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import math
 
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
 from backend.data_extraction.scraper import extract_recipe
-from backend.semantic_parsing.ingredient_parser import process_recipe
+from backend.llm_pipeline.llm import gpt
 from backend.recipe_generation.recipe_generator import RecipeGenerator
+from backend.semantic_parsing.ingredient_parser import process_recipe
 
 app = Flask(__name__)
 CORS(app)
+
 
 def clean_for_json(obj):
     if isinstance(obj, dict):
@@ -21,11 +24,13 @@ def clean_for_json(obj):
     else:
         return obj
 
+
 @app.post("/api/recipe/compare")
 def compare_recipe():
     data = request.get_json(force=True)
     recipe_url = data.get("url", "").strip()
     constraint = data.get("constraint", "").strip()
+    use_llm = True
 
     if not recipe_url:
         return jsonify({"error": "Missing recipe URL"}), 400
@@ -33,16 +38,18 @@ def compare_recipe():
     try:
         original_recipe = extract_recipe(recipe_url)
         enriched_recipe = process_recipe(original_recipe)
-
-        generator = RecipeGenerator(use_llm=False)
-        adapted_recipe = generator.generate(enriched_recipe, constraint or "Make it vegan")
-
+        if not use_llm:
+            generator = RecipeGenerator()
+            adapted_recipe = generator.generate(enriched_recipe, constraint or "Make it vegan")
+        else:
+            adapted_recipe = gpt(enriched_recipe, constraint)
         return jsonify({
             "original_recipe": clean_for_json(enriched_recipe),
             "adapted_recipe": clean_for_json(adapted_recipe),
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
