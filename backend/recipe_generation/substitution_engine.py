@@ -206,23 +206,10 @@ class SubstitutionEngine:
         df = pd.read_csv(Path(Path(__file__).parent / "ingredient_constraints.csv"))
 
         ingredient_name_lower = ingredient.get("name", "").lower()
-
-        mask1 = df["ingredient"].str.lower().str.contains(
-            ingredient_name_lower, na=False
-        )
-
-        satisfied_constraints = df.loc[mask1, "satisfied_constraints"]
-
-        # Fallback: ingredient_name contains df value
-        if satisfied_constraints.empty:
-            mask2 = df["ingredient"].fillna("").str.lower().apply(
-                lambda x: x in ingredient_name_lower
-            )
-            satisfied_constraints = df.loc[mask2, "satisfied_constraints"]
-
-        if satisfied_constraints.empty:
+        satisfied_constrains = df.loc[df['ingredient'] == ingredient_name_lower, 'satisfied_constraints']
+        if satisfied_constrains.empty:
             return False, constraints
-        satisfied_constrains = satisfied_constraints.iloc[0].replace(" ", "")
+        satisfied_constrains = satisfied_constrains.iloc[0].replace(" ", "")
         satisfied_constrains = set(satisfied_constrains.split(';'))
         if all(constraint in satisfied_constrains for constraint in constraints):
             return True, []
