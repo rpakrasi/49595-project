@@ -30,8 +30,8 @@ def compare_recipe():
     data = request.get_json(force=True)
     recipe_url = data.get("url", "").strip()
     constraint = data.get("constraint", "").strip()
-    use_llm = True
-
+    use_llm = data.get("use_llm", False)
+    
     if not recipe_url:
         return jsonify({"error": "Missing recipe URL"}), 400
 
@@ -52,4 +52,4 @@ def compare_recipe():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5000)

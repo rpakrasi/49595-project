@@ -98,6 +98,7 @@ function App() {
   const [error, setError] = useState("");
   const [original, setOriginal] = useState(null);
   const [adapted, setAdapted] = useState(null);
+  const [useLlm, setUseLlm] = useState(false);
 
   const substitutions =
     adapted?.adaptation_summary?.substitutions_made || [];
@@ -117,6 +118,7 @@ function App() {
         body: JSON.stringify({
           url: recipeUrl,
           constraint,
+          use_llm: useLlm,
         }),
       });
 
@@ -165,6 +167,28 @@ function App() {
               onChange={(e) => setConstraint(e.target.value)}
               placeholder="Example: Make it vegan and gluten-free"
             />
+          </div>
+
+          <div className="field">
+            <label>Generation Mode</label>
+
+            <div className="mode-toggle">
+              <button
+                type="button"
+                className={!useLlm ? "mode-option active" : "mode-option"}
+                onClick={() => setUseLlm(false)}
+              >
+                Rule-Based
+              </button>
+
+              <button
+                type="button"
+                className={useLlm ? "mode-option active" : "mode-option"}
+                onClick={() => setUseLlm(true)}
+              >
+                LLM
+              </button>
+            </div>
           </div>
 
           <button onClick={runPipeline} disabled={loading}>
