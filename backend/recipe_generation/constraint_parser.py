@@ -40,8 +40,8 @@ class ConstraintParser:
         "keto": r"\b(keto|ketogenic|low.?carb|no carb)\b",
         "paleo": r"\b(paleo|paleolithic)\b",
         "whole-30": r"\b(whole.?30|whole-30|w30)\b",
-        "low-sodium": r"\b(low.?sodium|low salt|salt.?free|healthy|no salt added|reduced sodium)\b",
-        "low-sugar": r"\b(low.?sugar|sugar.?free|no sugar|healthy|unsweetened|no added sugar)\b",
+        "low-sodium": r"\b(low.?sodium|less.?sodium|low salt|salt.?free|healthy|no salt added|reduced sodium|healthier)\b",
+        "low-sugar": r"\b(low.?sugar|less.?sugar|sugar.?free|no sugar|healthy|unsweetened|no added sugar|healthier)\b",
         "kosher": r"\b(kosher|halal)\b",
         "nut-free": r"\b(nut.?free|nut-free|no nut)\b",
     }
