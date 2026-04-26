@@ -32,7 +32,7 @@ class RecipeGenerator:
         library_path: Optional[str] = None,
         llm_provider: str = "openai",
         llm_model: str = "gpt-3.5-turbo",
-        use_llm: bool = True,
+        use_llm: bool = False,
     ):
         """
         Initialize the recipe generator.
