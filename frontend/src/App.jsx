@@ -140,10 +140,10 @@ function App() {
       <div className="container">
         <header className="hero">
           <p className="eyebrow">Cooking AI</p>
-          <h1>Original vs Adapted Recipe</h1>
+          <h1>Context-Aware Recipe Adaption</h1>
           <p className="subtext">
-            Enter a recipe URL and dietary constraint to compare the original
-            recipe with the adapted version.
+            Enter a recipe URL and dietary constraint to generate a new
+            recipe with adaptations made.
           </p>
         </header>
 
