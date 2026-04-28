@@ -109,7 +109,9 @@ class SubstitutionLibrary:
                         ingredient, na=False, regex=False
                     )
                 ) & (
-                        self.df["functional_role"].str.lower() == role
+                        self.df["functional_role"].str.lower().str.contains(
+                        role, na=False, regex=False
+                    )
                 )
 
         def matches2(r):
